@@ -1,0 +1,15 @@
+# test_postgresql.yml
+---
+- name: PostgreSQL infra 구축 (CentOS)
+  hosts: dbservers
+  become: true
+  vars_files:
+    - ./roles/postgresql/vars/main.yml
+  roles:
+    - postgresql
+
+- name: Video Storage Server
+  hosts: storage
+  become: true
+  roles:
+    - video_storage
