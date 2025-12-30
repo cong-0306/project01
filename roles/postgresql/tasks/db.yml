@@ -1,0 +1,12 @@
+---
+- name: Create application database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: mydb
+    owner: myadmin
+    encoding: UTF8
+    lc_collate: ko_KR.UTF-8
+    lc_ctype: ko_KR.UTF-8
+    state: present
+

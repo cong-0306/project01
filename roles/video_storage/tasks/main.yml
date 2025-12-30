@@ -1,0 +1,8 @@
+---
+# tasks file for video_storage
+# roles/video_storage/tasks/main.yml
+
+- import_tasks: install.yml
+- import_tasks: dirs.yml
+- import_tasks: config.yml
+

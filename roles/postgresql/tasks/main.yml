@@ -1,0 +1,52 @@
+---
+# tasks file for postgresql
+- name: 1) DB 패키지 설치
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pkg_db }}"
+
+- name: 1.1) PostgreSQL 초기화
+  ansible.builtin.command: "{{ init_db_command }}"
+  args:
+    creates: "/var/lib/pgsql/data/PG_VERSION"
+
+- name: 2) DB 서비스 기동
+  ansible.builtin.service:
+    name: "{{ svc_db }}"
+    state: started
+    enabled: true
+  notify:
+    - set db password
+
+- name: 설정 파일 배포(copy) - postgresql.conf
+  ansible.builtin.copy:
+    src: "{{ env_file }}"
+    dest: "{{ conf_postgresql }}"
+    owner: postgres
+    group: postgres
+    mode: '0644'
+  notify:
+    - restart db service
+
+- name: Wait for PostgreSQL data directory
+  ansible.builtin.wait_for:
+    path: /var/lib/pgsql/data
+    timeout: 30
+  become: true
+
+- name: 4) pg_hba.conf 배포
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "{{ pg_hba_file }}"
+    owner: postgres
+    group: postgres
+    mode: '0640'
+  become: true
+  notify:
+    - restart db service
+
+- meta: flush_handlers 
+
+- import_tasks: user.yml
+- import_tasks: db.yml

@@ -1,0 +1,15 @@
+# roles/video_storage/tasks/install.yml
+
+- name: Install NFS packages
+  become: true
+  yum:
+    name: "{{ nfs_packages }}"
+    state: present
+
+- name: Enable and start NFS server
+  become: true
+  systemd:
+    name: nfs-server
+    enabled: true
+    state: started
+

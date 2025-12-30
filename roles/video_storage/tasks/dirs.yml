@@ -1,0 +1,35 @@
+---
+# roles/video_storage/tasks/dirs.yml
+- name: Ensure nfsnobody group exists
+  become: true
+  ansible.builtin.group:
+    name: nfsnobody
+    system: yes
+
+- name: Ensure nfsnobody user exists
+  become: true
+  ansible.builtin.user:
+    name: nfsnobody
+    shell: /sbin/nologin
+    group: nfsnobody
+    system: yes
+
+- name: Create base video storage directory
+  become: true
+  file:
+    path: "{{ video_storage_base_dir }}"
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode: '0775'
+
+- name: Create video sub directories
+  become: true
+  file:
+    path: "{{ video_storage_base_dir }}/{{ item }}"
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode: '0775'
+  loop: "{{ video_storage_subdirs }}"
+

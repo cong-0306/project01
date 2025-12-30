@@ -1,0 +1,4 @@
+{% for net in nfs_allowed_client_networks %}
+{{ video_storage_export_dir }} {{ net }}({{ nfs_export_options }})
+{% endfor %}
+

@@ -1,0 +1,10 @@
+---
+# handlers file for video_storage
+## roles/video_storage/handlers/main.yml
+
+- name: Restart NFS
+  become: true
+  systemd:
+    name: nfs-server
+    state: restarted
+

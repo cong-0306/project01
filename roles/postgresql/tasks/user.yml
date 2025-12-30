@@ -1,0 +1,9 @@
+---
+- name: Create PostgreSQL superuser
+  community.postgresql.postgresql_user:
+    name: "{{ pg_superuser }}"
+    password: "{{ pg_password }}"
+    role_attr_flags: SUPERUSER
+    state: present
+  become: true
+  become_user: postgres

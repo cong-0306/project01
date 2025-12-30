@@ -1,0 +1,10 @@
+# "local" connections via Unix socket
+local   all             all                                     peer
+
+# Localhost TCP/IP
+host    all             all             127.0.0.1/24            md5
+host    all             all             ::1/128                 md5
+
+# 테스트용 클라이언트 접속 허용
+host    all             all             192.168.30.10/24        md5
+

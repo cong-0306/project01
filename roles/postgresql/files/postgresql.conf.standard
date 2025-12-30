@@ -1,0 +1,9 @@
+# PostgreSQL 기본 설정 파일 예시
+listen_addresses = '*'
+port = 5432
+max_connections = 100
+shared_buffers = 128MB
+logging_collector = on
+log_directory = 'pg_log'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+

@@ -1,0 +1,16 @@
+---
+# defaults file for video_storage
+# roles/video_storage/defaults/main.yml
+
+video_storage_base_dir: /data/video
+
+video_storage_subdirs:
+  - input
+  - output
+  - archive
+
+nfs_packages:
+  - nfs-utils
+
+nfs_options: "rw,sync,no_root_squash"
+

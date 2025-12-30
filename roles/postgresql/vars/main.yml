@@ -1,0 +1,17 @@
+---
+# vars file for postgresql (PostgreSQL용, CentOS 기준)
+pkg_db:
+  - postgresql-server
+  - postgresql
+  - python3-psycopg2
+svc_db: postgresql
+init_db_command: "/usr/bin/postgresql-setup initdb"  # CentOS/RedHat 계열 초기 DB 생성 명령
+env_file: 'postgresql.conf.standard'
+conf_get_url: 'http://control/postgresql.conf.standard'
+conf_postgresql: '/var/lib/pgsql/data/postgresql.conf'
+pg_hba_file: '/var/lib/pgsql/data/pg_hba.conf'
+pg_superuser: myadmin 
+pg_password: 'soldesk1.'
+pg_database: appdb
+pg_allowed_networks:
+  - "0.0.0.0/0" # 모든 외부 접속 허용 (운영 환경에서는 네트워크 대역 제한)
