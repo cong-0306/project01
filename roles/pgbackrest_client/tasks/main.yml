@@ -1,41 +1,22 @@
----
 - name: Disable PostgreSQL module
   become: true
   command: dnf module disable postgresql -y
   changed_when: false
 
-- name: Install PGDG repository (once)
+- name: Install PGDG repository
   become: true
   dnf:
-    name: pgdg-redhat-repo
+    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     state: present
-
+    disable_gpg_check: true
 
 - name: Enable pgdg-common repository
   become: true
   command: dnf config-manager --set-enabled pgdg-common
   changed_when: false
 
-- name: Clean dnf cache
-  become: true
-  command: dnf clean all
-  changed_when: false
-
-- name: Rebuild dnf cache
-  become: true
-  dnf:
-    update_cache: yes
-
 - name: Install pgBackRest
   become: true
   dnf:
     name: pgbackrest
     state: present
-
-- name: Check pgBackRest version
-  command: pgbackrest version
-  register: pgbackrest_version
-  changed_when: false
-
-- debug:
-    msg: "{{ pgbackrest_version.stdout }}"

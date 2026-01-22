@@ -1,0 +1,8 @@
+---
+- name: LB server
+  hosts: pgsql_lb
+  become: true
+
+  roles:
+    - haproxy_pgsql
+    - keepalived

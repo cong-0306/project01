@@ -1,0 +1,12 @@
+# playbooks/db.yml
+---
+- name: db server 
+  hosts: pgsql_db
+  become: true
+  roles:
+    - etcd
+    - postgresql
+    - patroni
+    - pgbackrest_client
+    - postgres_oauth
+    - postgres_ai
