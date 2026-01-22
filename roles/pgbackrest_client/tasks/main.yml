@@ -4,12 +4,12 @@
   command: dnf module disable postgresql -y
   changed_when: false
 
-- name: Install PGDG repository
+- name: Install PGDG repository (once)
   become: true
   dnf:
-    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    name: pgdg-redhat-repo
     state: present
-    disable_gpg_check: true
+
 
 - name: Enable pgdg-common repository
   become: true
@@ -21,10 +21,10 @@
   command: dnf clean all
   changed_when: false
 
-- name: Rebuild dnf cache (safe)
+- name: Rebuild dnf cache
   become: true
-  command: dnf makecache --timer
-  changed_when: false
+  dnf:
+    update_cache: yes
 
 - name: Install pgBackRest
   become: true
