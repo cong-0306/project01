@@ -1,64 +1,65 @@
 -- =========================
--- AI Videos (영상 단위)
+-- Final Selected Videos
 -- =========================
-CREATE TABLE IF NOT EXISTS ai_videos (
-  video_id BIGSERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS ai_final_videos (
+  final_video_id BIGSERIAL PRIMARY KEY,
+
+  -- 내부 식별자 (MinIO / AI 서버 기준 ID)
+  video_key VARCHAR(255) NOT NULL UNIQUE,
+
+  -- 소유 사용자 (oauth_users.user_id)
   user_id VARCHAR(255) NOT NULL,
 
+  -- YouTube 업로드 정보
+  youtube_uploaded BOOLEAN DEFAULT FALSE,
+  youtube_video_id VARCHAR(255),
+
+  -- 선택 시점
+  selected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  -- 업로드 시점
+  youtube_uploaded_at TIMESTAMP,
+
+  -- 확장용 메타
   title VARCHAR(255),
-  description TEXT,
-
-  status VARCHAR(30) DEFAULT 'processing',
-  output_path TEXT,
-  duration_seconds INTEGER,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  description TEXT
 );
 
--- =========================
--- AI Video Assets (파일 메타)
--- =========================
-CREATE TABLE IF NOT EXISTS ai_video_assets (
-  asset_id BIGSERIAL PRIMARY KEY,
+-- 조회 최적화
+CREATE INDEX IF NOT EXISTS idx_final_videos_user
+  ON ai_final_videos(user_id);
 
-  video_id BIGINT NOT NULL,
-  asset_type VARCHAR(50) NOT NULL,
-  file_path TEXT NOT NULL,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  CONSTRAINT fk_asset_video
-    FOREIGN KEY (video_id)
-    REFERENCES ai_videos(video_id)
-    ON DELETE CASCADE
-);
+CREATE INDEX IF NOT EXISTS idx_final_videos_youtube
+  ON ai_final_videos(youtube_uploaded);
 
 -- =========================
--- AI Prompt Precheck Logs
--- (LLM 사전 검증 차단 로그)
+-- Operation / Policy Logs
 -- =========================
-CREATE TABLE IF NOT EXISTS ai_prompt_precheck_logs (
+CREATE TABLE IF NOT EXISTS ai_operation_logs (
   log_id BIGSERIAL PRIMARY KEY,
 
-  user_id VARCHAR(255) NOT NULL,
-  prompt TEXT NOT NULL,
-  blocked_reason TEXT NOT NULL,
+  user_id VARCHAR(255),
+
+  -- PRECHECK / UPLOAD / SYSTEM
+  log_type VARCHAR(50) NOT NULL,
+
+  -- BLOCKED / FAILED / SUCCESS
+  status VARCHAR(30) NOT NULL,
+
+  -- 관련 영상 (있을 경우만)
+  video_key VARCHAR(255),
+
+  -- 사유 / 메시지
+  message TEXT NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =========================
--- Indexes
--- =========================
-CREATE INDEX IF NOT EXISTS idx_ai_videos_user_id
-  ON ai_videos(user_id);
+CREATE INDEX IF NOT EXISTS idx_op_logs_user
+  ON ai_operation_logs(user_id);
 
-CREATE INDEX IF NOT EXISTS idx_ai_videos_status
-  ON ai_videos(status);
+CREATE INDEX IF NOT EXISTS idx_op_logs_type
+  ON ai_operation_logs(log_type);
 
-CREATE INDEX IF NOT EXISTS idx_precheck_logs_user_id
-  ON ai_prompt_precheck_logs(user_id);
-
-CREATE INDEX IF NOT EXISTS idx_precheck_logs_created_at
-  ON ai_prompt_precheck_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_op_logs_created
+  ON ai_operation_logs(created_at);
