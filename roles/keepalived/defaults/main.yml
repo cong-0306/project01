@@ -1,7 +1,7 @@
 ---
 # roles/keepalived/defaults/main.yml
 
-keepalived_interface: ens192
+keepalived_interface: ens160
 keepalived_vip: 10.1.1.40
 keepalived_virtual_router_id: 51
 
